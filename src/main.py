@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from src.core.logging import setup_logging
-from src.api.health import router as health_router
 from src.api.chat import router as chat_router
+from src.api.health import router as health_router
+from src.core.logging import setup_logging
+
 
 def create_app() -> FastAPI:
     setup_logging()
@@ -28,5 +29,6 @@ def create_app() -> FastAPI:
         return {"ok": True, "service": "ai-assistant", "version": app.version}
 
     return app
+
 
 app = create_app()

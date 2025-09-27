@@ -1,4 +1,4 @@
-#!/Users/renatoboemer/code/developer/agentic-travel-assistant/.venv/bin/python3.11
+#!/Users/renatoboemer/code/developer/agentic-whatsapp-assistant/.venv/bin/python3.11
 import sys
 from uvicorn.main import main
 if __name__ == '__main__':

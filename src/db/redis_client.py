@@ -3,6 +3,7 @@ from src.core.config import settings
 
 _redis: Redis | None = None
 
+
 async def get_redis() -> Redis:
     global _redis
     if _redis is None:
