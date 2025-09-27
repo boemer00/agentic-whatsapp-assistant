@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      # In Compose, containers talk to Redis via the *service name* (not localhost)
+      REDIS_URL: ${REDIS_URL_COMPOSE:-redis://redis:6379/0}
+      APP_ENV: ${APP_ENV:-dev}
+      # --- Prod example (commented) ---
+      # APP_ENV: prod
+      # REDIS_URL: rediss://<your-managed-redis-host>:6379/0
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - .:/app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    # Expose only if you need a host GUI/CLI; safe to keep commented
+    # ports:
+    #   - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
