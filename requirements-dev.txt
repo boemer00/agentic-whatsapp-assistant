@@ -3,4 +3,5 @@ ruff>=0.6.9
 mypy>=1.11.2
 pytest>=8.3.2
 pytest-asyncio>=0.23.8
-types-requests>=2.32.0.20240907
+types-requests>=2.32.0
+types-python-dateutil>=2.9.0
