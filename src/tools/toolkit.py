@@ -2,6 +2,7 @@ import inspect
 from typing import Dict, Optional, Type
 
 from pydantic import BaseModel
+from src.core.tracing import traceable
 
 from src.core.config import settings
 from src.db.redis_client import get_redis
@@ -16,6 +17,7 @@ def register(tool: Tool) -> None:
         raise ValueError(f"Duplicate tool: {tool.name}")
     _REGISTRY[tool.name] = tool
 
+@traceable(name="call_tool")
 async def call_tool(
     name: str,
     payload: dict,

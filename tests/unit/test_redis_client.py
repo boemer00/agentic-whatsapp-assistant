@@ -32,3 +32,7 @@ def test_get_redis_recreates_on_new_loop(monkeypatch) -> None:
 
     assert first_client is not second_client
     assert len(creations) >= 2
+
+
+
+

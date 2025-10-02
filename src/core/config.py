@@ -34,6 +34,7 @@ class Settings(BaseSettings):
         env_file=".env",
         case_sensitive=False,
         populate_by_name=True,
+        extra="ignore",
     )
 
     @property

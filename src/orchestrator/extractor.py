@@ -2,6 +2,7 @@ import re
 from typing import Type, TypeVar
 
 from pydantic import BaseModel
+from src.core.tracing import traceable
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -36,7 +37,7 @@ def _extract_date(text: str) -> str | None:
         return "today"
     return None
 
-
+@traceable(name="extract_structured")
 def extract_structured(prompt: str, schema: Type[T], context: str) -> T:
     """
     Deterministic extractor for PoC:
