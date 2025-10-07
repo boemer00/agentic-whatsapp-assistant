@@ -149,3 +149,7 @@ $RECYCLE.BIN/
 
 # chat history
 .chat/
+
+# LangGraph
+langgraph.json
+demo_langgraph.py

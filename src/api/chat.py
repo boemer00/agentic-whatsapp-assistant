@@ -7,7 +7,6 @@ from fastapi.responses import StreamingResponse
 from src.core.config import settings
 from src.db.redis_client import get_redis
 from src.orchestrator.graph import handle_turn
-from src.orchestrator.router import route
 from src.safety.moderation import check_message
 from src.safety.rate_limit import fixed_window_allow
 from src.schemas.chat import ChatRequest, ChatResponse
@@ -35,8 +34,12 @@ async def chat(req: ChatRequest) -> ChatResponse:
             detail="Chat rate limit exceeded. Please wait a bit.",
         )
 
-    routed = route(req.message)  # traced via LangSmith in router.py
-    reply = f"Echo: {req.message}"
+    # Collect full response from graph streaming
+    reply_parts = []
+    async for token in handle_turn(req.session_id, req.message):
+        if not token.startswith("[intent:"):  # Skip intent markers
+            reply_parts.append(token)
+    reply = "".join(reply_parts) if reply_parts else "I'm not sure how to help with that."
     return ChatResponse(session_id=req.session_id, reply=reply)
 
 def _sse(payload: dict) -> str:
@@ -61,12 +64,15 @@ async def chat_stream(session_id: str = Query(...), message: str = Query(...)):
             yield _sse({"type": "error", "message": "Chat rate limit exceeded. Please wait a bit."})
         return StreamingResponse(limited(), media_type="text/event-stream")
 
-    routed = route(message)  # traced via LangSmith in router.py
-
     async def event_gen() -> AsyncIterator[bytes]:
-        yield _sse({"type": "route", "intent": routed.intent}).encode()
         async for tok in handle_turn(session_id, message):  # traced via LangSmith in graph.py
-            yield _sse({"type": "token", "text": tok}).encode()
+            # Route intent marker
+            if tok.startswith("[intent:"):
+                intent = tok[8:-1]  # Extract intent from [intent:XXX]
+                yield _sse({"type": "route", "intent": intent}).encode()
+            else:
+                # Regular token
+                yield _sse({"type": "token", "text": tok}).encode()
         yield _sse({"type": "done"}).encode()
 
     return StreamingResponse(event_gen(), media_type="text/event-stream")
@@ -102,10 +108,14 @@ async def chat_ws(ws: WebSocket):
                 }))
                 continue
 
-            routed = route(message)  # traced via LangSmith
-            await ws.send_text(json.dumps({"type": "route", "intent": routed.intent}))
             async for tok in handle_turn(session_id, message):  # traced via LangSmith
-                await ws.send_text(json.dumps({"type": "token", "text": tok}))
+                # Route intent marker
+                if tok.startswith("[intent:"):
+                    intent = tok[8:-1]  # Extract intent from [intent:XXX]
+                    await ws.send_text(json.dumps({"type": "route", "intent": intent}))
+                else:
+                    # Regular token
+                    await ws.send_text(json.dumps({"type": "token", "text": tok}))
             await ws.send_text(json.dumps({"type": "done"}))
     except WebSocketDisconnect:
         # No log output; silent close
