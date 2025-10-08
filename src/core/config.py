@@ -30,13 +30,11 @@ class Settings(BaseSettings):
     openai_api_key: Optional[str] = Field(default=None, alias="OPENAI_API_KEY")
     openai_model: Optional[str] = Field(default=None, alias="OPENAI_MODEL")
 
-    # LangSmith (for tracing and observability)
-    langsmith_api_key: Optional[str] = Field(default=None, alias="LANGSMITH_API_KEY")
-    langsmith_project: Optional[str] = Field(default=None, alias="LANGSMITH_PROJECT")
-    langsmith_tracing: bool = Field(default=True, alias="LANGSMITH_TRACING")
-    langsmith_endpoint: str = Field(
-        default="https://api.smith.langchain.com",
-        alias="LANGSMITH_ENDPOINT"
+    # Google Weather API
+    google_weather_api_key: Optional[str] = Field(default=None, alias="GOOGLE_WEATHER_API_KEY")
+    google_weather_api_url: str = Field(
+        default="https://weather.googleapis.com/v1",
+        alias="GOOGLE_WEATHER_API_URL"
     )
 
     model_config = SettingsConfigDict(

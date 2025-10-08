@@ -151,5 +151,5 @@ $RECYCLE.BIN/
 .chat/
 
 # LangGraph
-langgraph.json
+.langgraph_api/
 demo_langgraph.py
