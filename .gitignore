@@ -153,3 +153,8 @@ $RECYCLE.BIN/
 # LangGraph
 .langgraph_api/
 demo_langgraph.py
+.langgraph_api/
+
+# Local artifacts
+.langgraph_api/
+*.rdb
