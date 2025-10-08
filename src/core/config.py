@@ -30,12 +30,26 @@ class Settings(BaseSettings):
     openai_api_key: Optional[str] = Field(default=None, alias="OPENAI_API_KEY")
     openai_model: Optional[str] = Field(default=None, alias="OPENAI_MODEL")
 
+    # LangSmith
+    langsmith_tracing: bool = Field(default=False, alias="LANGSMITH_TRACING")
+    langsmith_api_key: Optional[str] = Field(default=None, alias="LANGSMITH_API_KEY")
+    langsmith_project: Optional[str] = Field(default=None, alias="LANGSMITH_PROJECT")
+    langsmith_endpoint: str = Field(
+        default="https://api.smith.langchain.com",
+        alias="LANGSMITH_ENDPOINT"
+    )
+
     # Google Weather API
     google_weather_api_key: Optional[str] = Field(default=None, alias="GOOGLE_WEATHER_API_KEY")
     google_weather_api_url: str = Field(
         default="https://weather.googleapis.com/v1",
         alias="GOOGLE_WEATHER_API_URL"
     )
+
+    # Twilio WhatsApp
+    twilio_account_sid: Optional[str] = Field(default=None, alias="TWILIO_ACCOUNT_SID")
+    twilio_auth_token: Optional[str] = Field(default=None, alias="TWILIO_AUTH_TOKEN")
+    twilio_whatsapp_number: Optional[str] = Field(default=None, alias="TWILIO_WHATSAPP_NUMBER")
 
     model_config = SettingsConfigDict(
         env_file=".env",

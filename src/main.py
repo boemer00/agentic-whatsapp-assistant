@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.api.health import router as health_router
 from src.api.chat import router as chat_router
+from src.api.whatsapp import router as whatsapp_router
 from src.core.langsmith_init import print_startup_config
 
 def create_app() -> FastAPI:
@@ -29,6 +30,7 @@ def create_app() -> FastAPI:
     # Routers
     app.include_router(health_router, tags=["health"])
     app.include_router(chat_router, tags=["chat"])
+    app.include_router(whatsapp_router, tags=["whatsapp"])
 
     @app.get("/", tags=["root"])
     def root():
